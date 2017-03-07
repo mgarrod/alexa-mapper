@@ -1,0 +1,19 @@
+<div class="dijitDialog ${baseClass}" role="dialog" aria-labelledby="${id}_title" style="width: 350px;">
+	<div data-dojo-attach-point="titleBar" class="dijitDialogTitleBar">
+		<span data-dojo-attach-point="titleNode" class="dijitDialogTitle" id="${id}_title"
+				role="heading" level="1">Web Map Topic</span>
+	</div>	
+	<div id="${id}containerNode" data-dojo-attach-point="containerNode" class="dijitDialogPaneContent">
+		<div>
+			<div style="padding-bottom:20px;">Web Map will use the topic you enter below to subscribe to your own Internet of Things. You will need to enter the same topic you entered on the Web Map skill. If you forgot your topic, just say: "Alexa, ask Web Map for my topic".
+			</div>
+			<label for="phone">Topic:</label>
+			<input type="text" data-dojo-attach-point="topic" required="true"
+    			data-dojo-type="dijit/form/ValidationTextBox"
+    			data-dojo-props="regExp:'^[a-zA-Z0-9-_]+$', invalidMessage:'Invalid topic. A valid topic can not have spaces and only contain numbers, letters, dashes, or underscores.'" />
+		</div>
+		<div style="border-top: 1px solid #d3d3d3; text-align: right; margin-top: 15px; padding: 3px 5px 2px 7px;">			
+			<button data-dojo-type='dijit/form/Button' type='button' data-dojo-attach-point="closeButtonNode" data-dojo-attach-event="click:_onCancel">Submit</button>
+		</div>		
+	</div>
+</div>

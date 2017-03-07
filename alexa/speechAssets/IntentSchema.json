@@ -1,0 +1,120 @@
+{
+  "intents": [
+    {
+      "intent": "MoveMapIntent",
+      "slots": [
+        {
+          "name": "PanDirection",
+          "type": "PAN_DIRECTIONS"
+        },
+        {
+          "name": "ZoomDirection",
+          "type": "ZOOM_DIRECTIONS"
+        }
+      ]
+    },
+    {
+      "intent": "ZoomtoPlaceIntent",
+      "slots": [
+        {
+          "name": "Place",
+          "type": "AMAZON.PostalAddress"
+        },
+        {
+          "name": "Country",
+          "type": "AMAZON.Country"
+        }
+      ]
+    },
+    {
+      "intent": "TiltCameraIntent",
+      "slots": [
+        {
+          "name": "Degree",
+          "type": "AMAZON.NUMBER"
+        }
+      ]
+    },
+    {
+      "intent": "ChangeHeadingIntent",
+      "slots": [
+        {
+          "name": "Degree",
+          "type": "AMAZON.NUMBER"
+        }
+      ]
+    },
+    {
+      "intent": "ResetMapIntent"
+    },
+    {
+      "intent": "CurrentLocationIntent"
+    },
+    {
+      "intent": "ViewShedIntent"
+    },
+    {
+      "intent": "RemoveGraphicsIntent"
+    },
+    {
+      "intent": "BufferPointIntent",
+      "slots": [
+        {
+          "name": "Distance",
+          "type": "AMAZON.NUMBER"
+        }
+      ]
+    },
+    {
+      "intent": "SpinTheGlobeIntent"
+    },
+    {
+      "intent": "StopAnimationIntent"
+    },
+    {
+      "intent": "FlyByIntent",
+      "slots": [
+        {
+          "name": "City",
+          "type": "AMAZON.US_CITY"
+        }
+      ]
+    },
+    {
+      "intent": "ShakeTheMapIntent"
+    },
+    {
+      "intent": "ShitchToStarWarsIntent"
+    },
+    {
+      "intent": "ShowHurricaneIntent"
+    },
+    {
+      "intent": "ServiceAreaIntent",
+      "slots": [
+        {
+          "name": "Minutes",
+          "type": "AMAZON.NUMBER"
+        }
+      ]
+    },
+    {
+      "intent": "ShowHelpIntent"
+    },
+    {
+      "intent": "CloseHelpIntent"
+    },
+    {
+      "intent": "LostTopicIntent"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    }
+   ]
+}

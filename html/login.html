@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  	<head>
+    	<meta charset="utf-8">
+    	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    	<title>Web Map Topic</title>
+
+    	<script>
+
+	      	// function to get url parameter
+	      	function getParameterByName(name) {
+
+	          var url = window.location.href;
+	          name = name.replace(/[\[\]]/g, "\\$&");
+	          var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+	              results = regex.exec(url);
+	          if (!results) return null;
+	          if (!results[2]) return '';
+	          return decodeURIComponent(results[2].replace(/\+/g, " "));
+	      	}
+
+      		var redirectUri = getParameterByName('redirect_uri');
+      		var clientId = getParameterByName('client_id');
+	      	var state = getParameterByName('state');
+	      	var scope = getParameterByName('scope');
+	      	var responseType = getParameterByName('response_type');	
+ 
+    	</script>
+	</head>
+	<body style="font-family='sans-serif'">
+
+	    <div style="text-align:center;">
+
+	    	<h4>Web Map will use the topic you enter below to publish to your own Internet of Things. You will need to enter the same topic at www.alexmap.net. A valid topic can not have spaces and only contain numbers, letters, dashes, or underscores.</h4>
+
+	    	Topic: <input type="text" id="topic" value="">
+	    	<button id="submitTopic">Submit</button>
+	    	<div id="invalidTopic" style="color:red;display:none;">Invalid topic. A valid topic can not have spaces and only contain numbers, letters, dashes, or underscores.</div>
+	    	
+		</div>
+
+		<div style="position: absolute;bottom: 5px;">
+    		<a href="privacypolicy.html">Privacy Policy</a>
+    	</div>
+
+		<script type="text/javascript">
+
+		  document.getElementById('submitTopic').onclick = function() {
+		  	var topicValue = document.getElementById("topic").value;
+		  	var regexp = /^[a-zA-Z0-9-_]+$/;
+		  	if (topicValue.search(regexp) == -1) {
+		  		document.getElementById("invalidTopic").style.display = "block";
+		  		return false;
+		  	}
+		  	window.location = redirectUri + "#token_type=Bearer&state=" + state + "&access_token=" + topicValue;
+	      };
+
+		</script>
+
+		
+	</body>  
+</html>

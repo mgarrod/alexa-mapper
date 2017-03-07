@@ -1,0 +1,52 @@
+MoveMapIntent to pan {PanDirection}
+MoveMapIntent to zoom {ZoomDirection}
+
+ZoomtoPlaceIntent to locate a place
+ZoomtoPlaceIntent to locate {Place}
+ZoomtoPlaceIntent to locate a country
+ZoomtoPlaceIntent to locate {Country}
+
+TiltCameraIntent to tilt the camera
+TiltCameraIntent to tilt the camera {Degree} degrees
+TiltCameraIntent angle of {Degree} 
+
+ChangeHeadingIntent to change the heading of the camera
+ChangeHeadingIntent to change the heading of the camera to {Degree}
+ChangeHeadingIntent heading of {Degree}
+
+ResetMapIntent to reset the map
+
+CurrentLocationIntent to find my current location
+
+ViewShedIntent to calculate the view shed
+
+RemoveGraphicsIntent to remove all graphics
+RemoveGraphicsIntent to remove all the graphics
+
+BufferPointIntent to buffer the point
+BufferPointIntent to buffer the point {Distance} feet
+BufferPointIntent buffer {Distance} feet
+
+SpinTheGlobeIntent to spin the globe
+
+StopAnimationIntent to pause animation
+
+FlyByIntent to fly over a city
+FlyByIntent to fly over {City}
+FlyByIntent fly over {City}
+
+ShakeTheMapIntent to start an earthquake
+
+ShitchToStarWarsIntent about a galaxy far far away
+
+ShowHurricaneIntent to show hurricanes
+
+ServiceAreaIntent to calculate drive times
+ServiceAreaIntent to calculate drive times for {Minutes} minutes
+ServiceAreaIntent drive time of {Minutes} minutes
+
+ShowHelpIntent to open help
+
+CloseHelpIntent to close help
+
+LostTopicIntent for my topic

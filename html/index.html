@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Web Map</title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+      #statusOuterDiv {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        padding: 12px;
+        border-radius: 10px;
+        background-color: rgba(0, 0, 0, 0.9);
+        color: white;
+      }
+      #topicOuterDiv {
+        position: absolute;
+        bottom: 25px;
+        right: 12px;
+        padding: 12px;
+        border-radius: 10px;
+        background-color: rgba(0, 0, 0, 0.9);
+        color: white;
+      }
+      #helpIconDiv {
+        position: absolute;
+        top: 205px;
+        left: 15px;
+        cursor: pointer;
+      }
+    </style>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.2/esri/css/main.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/4.2/dijit/themes/nihilo/nihilo.css">
+    <script>
+      dojoConfig = { 
+        parseOnLoad:true, 
+        isDebug:false,
+        async: true,
+        packages: [{
+            "name": "packages",
+              "location": "/js/packages"
+          }] 
+      }; 
+
+      // function to get url parameter
+      function getParameterByName(name) {
+          var url = window.location.href;
+          name = name.replace(/[\[\]]/g, "\\$&");
+          var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+              results = regex.exec(url);
+          if (!results) return null;
+          if (!results[2]) return '';
+          return decodeURIComponent(results[2].replace(/\+/g, " "));
+      }
+
+      var mapTopic = getParameterByName('mapTopic');
+
+    </script>
+
+    <script src="js/config.js"></script>
+    <script src="js/aws-iot-sdk-browser-bundle.js"></script>
+    <script src="js/aws-mapper-iot.js"></script>
+    <script src="https://js.arcgis.com/4.2/"></script>
+
+    <script>
+
+      // global for the aws-mapper-iot when a topic is published to AWS IoT
+      var mapFunctions;
+
+      require([
+        "dojo/ready",
+        "esri/Map",
+        "esri/views/SceneView",
+        "esri/config",
+        "packages/MapFunctions",
+        "packages/TopicDialog",
+        "dojo/_base/lang",
+        "dojo/on",
+        "dojo/html",
+        "dojo/dom",
+        "dojo/domReady!"
+      ], function(
+        ready,
+        Map, 
+        SceneView,
+        esriConfig,
+        MapFunctions,
+        TopicDialog,
+        lang,
+        on,
+        html,
+        dom
+      ) {
+
+        esriConfig.corsDetection = false;
+
+        // basic map
+        var map = new Map({
+          basemap: "hybrid",
+          ground: "world-elevation"
+        });
+
+        // intial etxtent is the entire globe
+        var view = new SceneView({
+          container: "viewDiv",
+          map: map,
+          scale: 50000000,
+          center: [-101.17, 21.78]
+          //center: [-84.5120, 39.1031]
+        });
+
+        view.then(lang.hitch(this, function() {
+
+          // widget for all the Alexa called functions
+          mapFunctions = new MapFunctions({
+            view: view
+          });
+          mapFunctions.startup();
+
+          if (mapTopic !== null) {
+
+            console.log('map topic = ' + mapTopic);
+            html.set(dom.byId('topicDiv'), 'Topic: ' + mapTopic);
+                  
+            // set the status to waiting
+            mapFunctions.updateStatus('waiting for a command from Alexa');
+
+
+            // testing
+            //mapFunctions.callMapFunction({function:'currentLocation',values:[]});
+            //mapFunctions.callMapFunction({function:'currentLocation',values:[]});
+            //mapFunctions.callMapFunction({function:'goToPlace',values:['vietnam']});
+            //mapFunctions.callMapFunction({function:'zoomTo',values:[1]});
+            //mapFunctions.callMapFunction({function:'viewShed',values:[]});
+            //mapFunctions.callMapFunction({function:'spinTheGlobe',values:[]});
+            //mapFunctions.callMapFunction({function:'flyBy',values:['45202']});
+            //mapFunctions.callMapFunction({function:'shakeTheMap',values:[]});
+            //mapFunctions.callMapFunction({function:'switchToStarWars',values:[]});
+            //mapFunctions.callMapFunction({function:'showHurricane',values:[]});
+            //mapFunctions.callMapFunction({function:'showServiceAreas',values:[1]});
+          
+
+          }
+          else {
+            getMapTopic();
+          }
+
+          on(dom.byId("helpIconDiv"), "click", lang.hitch(this, mapFunctions.showHelp));
+          on(dom.byId("closeHelp"), "click", lang.hitch(this, mapFunctions.closeHelp));
+
+        }));
+
+        function getMapTopic() {
+          if (mapFunctions !== undefined)
+            mapFunctions.updateStatus('setting topic', true);
+          var topicDialog = new TopicDialog({
+            mapTopic: mapTopic
+          });
+          topicDialog.on('topic-set', lang.hitch(this, function(data) {
+            mapTopic = data.mapTopic;
+            console.log('map topic = ' + mapTopic);
+
+            html.set(dom.byId('topicDiv'), 'Topic: ' + mapTopic);
+
+            window.mqttUnSubReSubHandler(mapTopic);
+            
+            window.history.pushState('',document.title,config.AMAZON_CALLBACK_URL + '?mapTopic=' + mapTopic);
+            // set the status to waiting
+            if (mapFunctions !== undefined)
+              mapFunctions.updateStatus('waiting for a command from Alexa');
+
+          }));
+          topicDialog.show();
+        }
+
+        on(dom.byId("changeTopic"), "click", function() {
+          getMapTopic();
+        });
+
+      });
+
+      
+    </script>
+</head>
+<body class="nihilo" style="font-family='sans-serif'">
+    <div id="viewDiv"></div>
+    <div id="statusOuterDiv">
+      <img id="statusThinking" src="img/thinking.gif" align="center" style="width: 25px;height: 25px;" />
+      <span id="statusDiv" style="padding-left: 3px;">
+        loading map
+      </span>
+    </div>
+    <div id="helpIconDiv">
+      <img src="img/help.png" style="width: 32px;height: 32px;">
+    </div>
+    <div id="helpDiv" style="width: 100%; color: white; position: absolute; top: 0px; background: rgba(0, 0, 0, 0.5); display: none;">
+      <div style=" padding: 10px;padding-left: 60px;">
+        <h3>Available Commands:</h3>
+        <ul>
+          <li>Alexa, ask Web Map for my topic.</li>
+          <li>Alexa, ask Web Map to zoom in.</li>
+          <li>Alexa, ask Web Map to locate a place.</li>
+          <li>Alexa, ask Web Map to locate a country.</li>
+          <li>Alexa, ask Web Map to reset the map.</li>
+          <li>Alexa, ask Web Map to find my current location.</li>
+          <li>Alexa, ask Web Map to remove all graphics.</li>
+          <li>Alexa, ask Web Map to spin the globe.</li>
+          <li>Alexa, ask Web Map to pause animation.</li>
+          <li>Alexa, ask Web Map to calculate the view shed.</li>
+          <li>Alexa, ask Web Map to buffer the point.</li>
+          <li>Alexa, ask Web Map to fly over a city.</li>
+          <li>Alexa, ask Web Map to start an earthquake.</li>
+          <li>Alexa, ask Web Map to show hurricanes.</li>
+          <li>Alexa, ask Web Map to calculate drive times.</li>
+          <li>Alexa, ask Web Map to tilt the camera.</li>
+          <li>Alexa, ask Web Map to change the heading of the camera.</li>
+          <li>Alexa, ask Web Map to open help.</li>
+          <li>Alexa, ask Web Map to close help.</li>
+          <li>Alexa, ask Web Map about a galaxy far far away.</li>
+        </ul>
+        <button id="closeHelp">close</button>
+      </div>
+    </div>
+
+    <!-- <div style="position:absolute;left:0px;bottom:12px;">
+     <script type="text/javascript">
+        amzn_assoc_ad_type = "banner";
+        amzn_assoc_marketplace = "amazon";
+        amzn_assoc_region = "US";
+        amzn_assoc_placement = "assoc_banner_placement_default";
+        amzn_assoc_campaigns = "electronics";
+        amzn_assoc_banner_type = "rotating";
+        amzn_assoc_p = "26";
+        amzn_assoc_width = "468";
+        amzn_assoc_height = "60";
+        amzn_assoc_tracking_id = "alexamap01-20";
+        amzn_assoc_linkid = "c345ef63a84c99d83cc58c23f68d40ef";
+     </script>
+     <script src="//z-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&Operation=GetScript&ID=OneJS&WS=1"></script>
+    </div> -->
+
+    <div id="topicOuterDiv">
+      <img id="changeTopic" src="img/pencil.png" align="center" title="edit topic" style="cursor:pointer;width: 25px;height: 25px;" />
+      <span id="topicDiv" style="padding-left: 3px;">
+      </span>
+    </div>
+
+</body>
+</html>
